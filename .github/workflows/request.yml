@@ -1,0 +1,52 @@
+name: Request
+on:
+  issues:
+    types:
+      - opened
+  issue_comment:
+    types:
+      - created
+env:
+  TZ: 'Asia/Tokyo'
+jobs:
+  register:
+    runs-on: ubuntu-22.04
+    if: |
+      contains(github.event.issue.labels.*.name, 'registration') && (
+        (github.event_name == 'issues') || (
+          github.event_name == 'issue_comment' &&
+          !github.event.issue.pull_request &&
+          startsWith(github.event.comment.body, '/retry') &&
+          (github.actor == github.event.issue.user.login)
+        )
+      )
+    steps:
+      - if: github.event_name == 'issues'
+        run: |
+          gh api -X POST repos/CyberAgentHack/web-speed-hackathon-2024-scoring-tool-workspace/issues/${{ github.event.issue.number }}/reactions \
+            -f content=+1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - if: github.event_name == 'issue_comment'
+        run: |
+          gh api -X POST repos/CyberAgentHack/web-speed-hackathon-2024-scoring-tool-workspace/issues/comments/${{ github.event.comment.id }}/reactions \
+            -f content=+1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # renovate: tag=v4.1.2
+        with:
+          repository: CyberAgentHack/web-speed-hackathon-2024-scoring-tool-workspace
+          ssh-key: ${{ secrets.CHECKOUT_WORKSPACE }}
+      - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # renovate: tag=v3.0.0
+        with:
+          version: latest
+      - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # renovate: tag=v4.0.2
+        with:
+          node-version-file: '.node-version'
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm playwright install chromium --with-deps
+      - run: pnpm start
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SCORE_SERVER_AUTH_TOKEN: ${{ secrets.SCORE_SERVER_AUTH_TOKEN }}
