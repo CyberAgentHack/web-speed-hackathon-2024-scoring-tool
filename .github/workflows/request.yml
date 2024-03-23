@@ -23,13 +23,13 @@ jobs:
     steps:
       - if: github.event_name == 'issues'
         run: |
-          gh api -X POST repos/CyberAgentHack/web-speed-hackathon-2024-scoring-tool-workspace/issues/${{ github.event.issue.number }}/reactions \
+          gh api -X POST repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/reactions \
             -f content=+1
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - if: github.event_name == 'issue_comment'
         run: |
-          gh api -X POST repos/CyberAgentHack/web-speed-hackathon-2024-scoring-tool-workspace/issues/comments/${{ github.event.comment.id }}/reactions \
+          gh api -X POST repos/${{ github.repository }}/issues/comments/${{ github.event.comment.id }}/reactions \
             -f content=+1
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
