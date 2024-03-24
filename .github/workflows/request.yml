@@ -33,6 +33,11 @@ jobs:
             -f content=+1
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL);
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN);
       - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # renovate: tag=v4.1.2
         with:
           repository: CyberAgentHack/web-speed-hackathon-2024-scoring-tool-workspace
