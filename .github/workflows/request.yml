@@ -44,7 +44,7 @@ jobs:
           ssh-key: ${{ secrets.CHECKOUT_WORKSPACE }}
       - uses: pnpm/action-setup@a3252b78c470c02df07e9d59298aecedc3ccdd6d # renovate: tag=v3.0.0
         with:
-          version: latest
+          package_json_file: 'package.json'
       - uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # renovate: tag=v4.0.2
         with:
           node-version-file: '.node-version'
